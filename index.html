@@ -202,8 +202,8 @@ header.solid{background:rgba(16,12,10,.72);backdrop-filter:blur(14px);border-col
   background:linear-gradient(180deg,rgba(16,12,10,.04) 42%,rgba(16,12,10,.88))}
 .fac-card .grade::before{content:"";position:absolute;inset:0;background:var(--grad-soft);mix-blend-mode:soft-light;opacity:.55}
 .fac-card .cap{position:absolute;left:0;right:0;bottom:0;padding:20px;z-index:2}
-.fac-card .cap b{display:block;font-size:17px}
-.fac-card .cap span{color:var(--muted);font-size:12.5px}
+.fac-card .cap b{display:block;font-size:17px;color:#fff}
+.fac-card .cap span{color:rgba(255,255,255,.74);font-size:12.5px}
 .fac-card.big .cap b{font-size:23px}
 .fac-card .tag{position:absolute;top:14px;left:14px;z-index:2;font-size:11px;font-weight:700;letter-spacing:.04em;
   padding:6px 12px;border-radius:999px;background:rgba(16,12,10,.5);border:1px solid var(--line);backdrop-filter:blur(6px)}
@@ -262,6 +262,40 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 .foot-grid .brand .bt b{font-size:15px}
 
 /* ---------- keyframes ---------- */
+/* ===================== LIGHT SECTIONS (밝은 크림 하프) ===================== */
+.light{
+  --cream:#2a231d;              /* 텍스트가 어두워짐 */
+  --muted:#8a7c6b;
+  --line:rgba(42,35,29,.13);
+  --panel:#ffffff;
+  background:#f6f0e6;
+  color:#2a231d;
+}
+/* 다크→크림 전환: 첫 밝은 섹션이 시트처럼 둥글게 올라옴 */
+#facility.light{border-radius:46px 46px 0 0;margin-top:-34px;padding-top:96px;z-index:2}
+#facility.light::before{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:44px;height:4px;border-radius:99px;background:var(--grad);opacity:.9}
+.light .sec-head p,.light .stat span,.light .cta p{color:var(--muted)}
+/* 진료과목 카드(밝은 버전엔 안 쓰이지만 대비 위해) */
+.light .svc{background:#fff;box-shadow:0 10px 30px rgba(42,35,29,.06)}
+.light .svc:hover{border-color:rgba(139,58,174,.4);box-shadow:0 16px 40px rgba(139,58,174,.15)}
+/* 시설 카드 */
+.light .fac-card{background:#ece4d6;box-shadow:0 14px 36px rgba(42,35,29,.09)}
+/* 오시는 길 카드 */
+.light .info-card{background:#fff;box-shadow:0 14px 36px rgba(42,35,29,.07)}
+.light .map-card{box-shadow:0 14px 36px rgba(42,35,29,.07);background:#eef1f6;
+  background-image:radial-gradient(circle at 30% 28%,rgba(31,111,224,.14),transparent 44%),radial-gradient(circle at 72% 74%,rgba(232,32,58,.11),transparent 44%)}
+.light .map-pin b{background:rgba(255,255,255,.9);color:#2a231d;border-color:rgba(42,35,29,.12)}
+.light .map-card .foot{background:linear-gradient(180deg,transparent,rgba(238,241,246,.94));color:#2a231d}
+.light .map-card .foot small{color:var(--muted)}
+/* CTA */
+.light .btn-ghost{border-color:rgba(42,35,29,.2)}
+.light .btn-ghost:hover{border-color:rgba(42,35,29,.45)}
+/* 푸터(밝은 버전) */
+footer.light{background:#efe7d9;border-top-color:rgba(42,35,29,.1)}
+footer.light .muted{color:#8a7c6b}
+@media(max-width:760px){#facility.light{border-radius:34px 34px 0 0}}
+
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes bob{0%,100%{transform:translateZ(80px) translateY(0)}50%{transform:translateZ(80px) translateY(-12px)}}
 @keyframes wheel{0%{opacity:1;transform:translate(-50%,0)}70%{opacity:0;transform:translate(-50%,10px)}100%{opacity:0}}
@@ -397,7 +431,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 </section>
 
 <!-- ============ FACILITY ============ -->
-<section class="sec" id="facility" style="padding-top:20px">
+<section class="sec light" id="facility" style="padding-top:20px">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Our Facility</span>
@@ -435,7 +469,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 </section>
 
 <!-- ============ STATS ============ -->
-<section class="sec" id="stats" style="padding-top:20px">
+<section class="sec light" id="stats" style="padding-top:20px">
   <div class="wrap">
     <div class="stats">
       <div class="stat reveal d1"><b data-count="1" data-suffix="">1</b><span>평택 최초 한방재활 특화</span></div>
@@ -447,7 +481,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 </section>
 
 <!-- ============ INFO ============ -->
-<section class="sec" id="info" style="padding-top:20px">
+<section class="sec light" id="info" style="padding-top:20px">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Visit Us</span>
@@ -477,7 +511,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 </section>
 
 <!-- ============ FINAL CTA ============ -->
-<section class="cta">
+<section class="cta light">
   <div class="wrap">
     <div class="reveal">
       <h2>아이의 걸음이 무거워 보인다면,<br><span class="grad">지금 상담하세요.</span></h2>
@@ -491,7 +525,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;position:relative;z-
 </section>
 
 <!-- ============ FOOTER ============ -->
-<footer>
+<footer class="light">
   <div class="wrap foot-grid">
     <div>
       <div class="brand" style="margin-bottom:14px">
