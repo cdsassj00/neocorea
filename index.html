@@ -177,6 +177,26 @@ h1 em,h2 em,.em{font-style:normal;color:var(--bronze)}
 .care .quote{margin-top:28px;font-family:var(--serif);font-style:italic;font-weight:300;
   font-size:clamp(16px,1.8vw,20px);color:var(--bronze)}
 
+/* ---------- FILM (스크롤 스크럽 — 프레임 시퀀스) ---------- */
+#film{height:380vh;position:relative;display:none}
+#film.on{display:block}
+.film-sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+#filmCanvas{position:absolute;inset:0;width:100%;height:100%}
+.film-vig{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse at center,transparent 46%,rgba(20,16,9,.66) 100%),
+  linear-gradient(rgba(20,16,9,.42),transparent 18%,transparent 80%,rgba(20,16,9,.55))}
+.film-layer{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:0 clamp(24px,6vw,96px);opacity:0;pointer-events:none;will-change:opacity,transform}
+.film-layer h2{font-size:clamp(28px,4.4vw,54px);line-height:1.3;text-shadow:0 2px 30px rgba(20,16,9,.9)}
+.film-layer .eyebrow{margin-bottom:18px}
+.film-layer.right{align-items:flex-end;text-align:right}
+.film-tc{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;align-items:center;gap:16px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim)}
+.film-tc .reel{width:min(300px,40vw);height:1px;background:var(--hair);position:relative}
+.film-tc .reel i{position:absolute;top:50%;left:0;width:8px;height:8px;border-radius:50%;
+  background:var(--bronze);transform:translate(-50%,-50%);box-shadow:0 0 12px var(--bronze)}
+.film-tc b{color:var(--ink);font-weight:400}
+
 /* ============ PAPER (크림 시트: 시설 · 통계 · 오시는길) ============ */
 .paper{background:var(--paper);color:var(--ink-d);border-radius:3px;position:relative;z-index:2}
 .paper .eyebrow{color:#9a7b4f}
@@ -396,6 +416,23 @@ footer{border-top:1px solid var(--hair);padding:clamp(48px,7vw,80px) 0 60px;posi
         <div class="quote">“다시 뛰어노는 모습, 그게 우리의 목표입니다.”</div>
       </div></div>
     </div>
+  </div>
+</section>
+
+<!-- ============ FILM (스크롤 스크럽) ============ -->
+<section id="film">
+  <div class="film-sticky">
+    <canvas id="filmCanvas"></canvas>
+    <div class="film-vig"></div>
+    <section class="film-layer" id="FL0">
+      <span class="eyebrow">Hospital Tour — Scroll Film</span>
+      <h2>작은 방 하나하나에,<br><em>진심</em>을 지었습니다</h2>
+    </section>
+    <section class="film-layer right" id="FL1">
+      <span class="eyebrow">Six Departments</span>
+      <h2>내과부터 외과 수술까지,<br>한 곳에서 이어서 봅니다</h2>
+    </section>
+    <div class="film-tc"><span>Frame</span><div class="reel"><i id="filmHead"></i></div><b id="filmNo">001</b></div>
   </div>
 </section>
 
@@ -636,6 +673,46 @@ function frame(){
   requestAnimationFrame(frame);
 }
 frame();
+
+/* ================= FILM scrub (assets/film/f_001.jpg …) ================= */
+(function(){
+  const COUNT=120, PATH='assets/film/f_', PAD=3;
+  const sec=document.getElementById('film');
+  const cv=document.getElementById('filmCanvas'), cx=cv.getContext('2d');
+  const head=document.getElementById('filmHead'), no=document.getElementById('filmNo');
+  const layers=[{e:document.getElementById('FL0'),w:[0,.06,.30,.42]},
+                {e:document.getElementById('FL1'),w:[.52,.62,.84,.95]}];
+  const probe=new Image();
+  probe.onload=()=>{ sec.classList.add('on'); boot(); };
+  probe.src=PATH+'001.jpg';
+  function boot(){
+    const imgs=new Array(COUNT); let loaded=0;
+    for(let i=0;i<COUNT;i++){ const m=new Image();
+      m.onload=()=>{ if(++loaded===1) draw(0,true); };
+      m.src=PATH+String(i+1).padStart(PAD,'0')+'.jpg'; imgs[i]=m; }
+    let last=-1, pr=0;
+    function draw(i,f){ const m=imgs[i]; if(!m||!m.complete||!m.naturalWidth) return;
+      if(i===last&&!f) return; last=i;
+      const cw=cv.width,ch=cv.height,iw=m.naturalWidth,ih=m.naturalHeight;
+      const s=Math.max(cw/iw,ch/ih);
+      cx.drawImage(m,(cw-iw*s)/2,(ch-ih*s)/2,iw*s,ih*s); }
+    function rs(){ const d=Math.min(devicePixelRatio,2);
+      cv.width=innerWidth*d; cv.height=innerHeight*d; draw(Math.max(0,last),true); }
+    addEventListener('resize',rs); rs();
+    const sg=(p,a,b)=>Math.max(0,Math.min(1,(p-a)/(b-a)));
+    const fd=(p,w)=>p<w[0]?0:p<w[1]?sg(p,w[0],w[1]):p<w[2]?1:1-sg(p,w[2],w[3]);
+    (function tick(){ requestAnimationFrame(tick);
+      const r=sec.getBoundingClientRect();
+      const tg=Math.max(0,Math.min(1,-r.top/(sec.offsetHeight-innerHeight)));
+      pr+=(tg-pr)*.12;
+      draw(Math.round(pr*(COUNT-1)));
+      layers.forEach(L=>{ const o=fd(pr,L.w); L.e.style.opacity=o;
+        L.e.style.transform=`translateY(${(1-o)*26}px)`; });
+      head.style.left=(pr*100)+'%';
+      no.textContent=String(Math.round(pr*(COUNT-1))+1).padStart(3,'0')+' / '+COUNT;
+    })();
+  }
+})();
 
 /* ================= reveal + counters ================= */
 const io=new IntersectionObserver((es)=>{
